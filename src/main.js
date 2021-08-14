@@ -25,7 +25,7 @@ Vue.filter('date', dateFilter)
 Vue.filter('currency', currencyFilter)
 Vue.directive('tooltip', tooltipDirective)
 Vue.component('Loader', Loader)
-Vue.component('paginate', Paginate)
+Vue.component('Paginate', Paginate)
 
 firebase.initializeApp({
   apiKey: "AIzaSyDdLF9F2M17MBgHw6fccfR5_WDWFBYqoew",
