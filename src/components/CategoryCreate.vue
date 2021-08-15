@@ -2,7 +2,7 @@
   <div class="col s12 m6">
     <div>
       <div class="page-subtitle">
-        <h4>Создать</h4>
+        <h4>{{ 'Cat_Create' | localize }}</h4>
       </div>
 
       <form @submit.prevent="submitHandler">
@@ -13,11 +13,11 @@
             v-model.trim="title"
             :class="{ invalid: $v.title.$dirty && !$v.title.required }"
           />
-          <label for="name">Название</label>
+          <label for="name">{{ 'Cat_Label' | localize }}</label>
           <span
             v-if="$v.title.$dirty && !$v.title.required"
             class="helper-text invalid"
-            >Введите название категории</span
+            >{{ 'Cat_CatName' | localize }}</span
           >
         </div>
 
@@ -28,16 +28,17 @@
             v-model.number="limit"
             :class="{ invalid: $v.limit.$dirty && !$v.limit.minValue }"
           />
-          <label for="limit">Лимит</label>
+          <label for="limit">{{ 'Cat_Limit' | localize }}</label>
           <span
             v-if="$v.limit.$dirty && !$v.limit.minValue"
             class="helper-text invalid"
-            >Минимальное значение {{ $v.limit.$params.minValue.min }}</span
+            >{{ 'Cat_MinValue' | localize }}
+            {{ $v.limit.$params.minValue.min }}</span
           >
         </div>
 
         <button class="btn waves-effect waves-light" type="submit">
-          Создать
+          {{ 'Record_Create' | localize }}
           <i class="material-icons right">send</i>
         </button>
       </form>
@@ -46,10 +47,10 @@
 </template>
 
 <script>
-import { required, minValue } from "vuelidate/lib/validators";
+import { required, minValue } from 'vuelidate/lib/validators'
 export default {
   data: () => ({
-    title: "",
+    title: '',
     limit: 1,
   }),
   validations: {
@@ -57,28 +58,28 @@ export default {
     limit: { minValue: minValue(100) },
   },
   mounted() {
-    window.M.updateTextFields();
+    window.M.updateTextFields()
   },
   methods: {
     async submitHandler() {
       if (this.$v.$invalid) {
-        this.$v.$touch();
-        return;
+        this.$v.$touch()
+        return
       }
       try {
-        const category = await this.$store.dispatch("createCategory", {
+        const category = await this.$store.dispatch('createCategory', {
           title: this.title,
           limit: this.limit,
-        });
-        this.title = "";
-        this.limit = 100;
-        this.$v.$reset();
-        this.$message("Категория была создана");
-        this.$emit("created", category);
+        })
+        this.title = ''
+        this.limit = 100
+        this.$v.$reset()
+        this.$message('Категория была создана')
+        this.$emit('created', category)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
   },
-};
+}
 </script>

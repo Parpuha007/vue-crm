@@ -3,19 +3,19 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Сумма</th>
-        <th>Дата</th>
-        <th>Категория</th>
-        <th>Тип</th>
-        <th>Открыть</th>
+        <th>{{ 'History_Amount' | localize }}</th>
+        <th>{{ 'History_Date' | localize }}</th>
+        <th>{{ 'History_Category' | localize }}</th>
+        <th>{{ 'History_Type' | localize }}</th>
+        <th>{{ 'History_Open' | localize }}</th>
       </tr>
     </thead>
 
     <tbody>
       <tr v-for="(record, idx) of records" :key="record.id">
         <td>{{ idx + 1 }}</td>
-        <td>{{ record.amount | currency("RUB") }}</td>
-        <td>{{ record.date | date("datetime") }}</td>
+        <td>{{ record.amount | currency('RUB') }}</td>
+        <td>{{ record.date | date('datetime') }}</td>
         <td>{{ record.categoryName }}</td>
         <td>
           <span class="white-text badge" :class="[record.typeClass]">{{
@@ -45,5 +45,5 @@ export default {
       type: Array,
     },
   },
-};
+}
 </script>

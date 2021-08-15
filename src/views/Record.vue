@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="page-title">
-      <h3>Новая запись</h3>
+      <h3>{{ 'Record_Title' | localize }}</h3>
     </div>
     <Loader v-if="loading" />
     <p v-else-if="!categories.length" class="center">
       Категорий пока нет.
-      <router-link to="/categories">Добавить новую категорию</router-link>
+      <router-link to="/categories">{{ 'Add' | localize }}</router-link>
     </p>
     <form v-else class="form" @submit.prevent="submitHandler">
       <div class="input-field">
@@ -15,7 +15,7 @@
             {{ c.title }}
           </option>
         </select>
-        <label>Выберите категорию</label>
+        <label>{{ 'Record_Category' | localize }}</label>
       </div>
 
       <p>
@@ -27,7 +27,7 @@
             type="radio"
             value="income"
           />
-          <span>Доход</span>
+          <span>{{ 'Income' | localize }}</span>
         </label>
       </p>
 
@@ -40,7 +40,7 @@
             type="radio"
             value="outcome"
           />
-          <span>Расход</span>
+          <span>{{ 'Outcome' | localize }}</span>
         </label>
       </p>
 
@@ -51,11 +51,12 @@
           v-model.number="amount"
           :class="{ invalid: $v.amount.$dirty && !$v.amount.minValue }"
         />
-        <label for="amount">Сумма</label>
+        <label for="amount">{{ 'History_Amount' | localize }}</label>
         <span
           class="helper-text invalid"
           v-if="$v.amount.$dirty && !$v.amount.minValue"
-          >Минимальное значение {{ $v.amount.$params.minValue.min }}</span
+          >{{ 'Record_Min' | localize }}
+          {{ $v.amount.$params.minValue.min }}</span
         >
       </div>
 
@@ -68,16 +69,16 @@
             invalid: $v.description.$dirty && !$v.description.required,
           }"
         />
-        <label for="description">Описание</label>
+        <label for="description">{{ 'Detail_Description' | localize }}</label>
         <span
           class="helper-text invalid"
           v-if="$v.description.$dirty && !$v.description.required"
-          >Введите описание</span
+          >{{ 'Record_Description' | localize }}</span
         >
       </div>
 
       <button class="btn waves-effect waves-light" type="submit">
-        Создать
+        {{ 'Record_Create' | localize }}
         <i class="material-icons right">send</i>
       </button>
     </form>
@@ -85,77 +86,82 @@
 </template>
 
 <script>
-import { required, minValue } from "vuelidate/lib/validators";
-import { mapGetters } from "vuex";
+import { required, minValue } from 'vuelidate/lib/validators'
+import { mapGetters } from 'vuex'
 export default {
-  name: "record",
+  metaInfo() {
+    return {
+      title: this.$title('Menu_Record'),
+    }
+  },
+  name: 'record',
   data: () => ({
     select: null,
     loading: true,
     categories: [],
     category: null,
-    type: "outcome",
+    type: 'outcome',
     amount: 1,
-    description: "",
+    description: '',
   }),
   methods: {
     async submitHandler() {
       if (this.$v.$invalid) {
-        this.$v.$touch();
-        return;
+        this.$v.$touch()
+        return
       }
       if (this.canCreateRecord) {
         try {
-          await this.$store.dispatch("createRecord", {
+          await this.$store.dispatch('createRecord', {
             categoryId: this.category,
             amount: this.amount,
             description: this.description,
             type: this.type,
             date: new Date().toJSON(),
-          });
+          })
           const bill =
-            this.type === "income"
+            this.type === 'income'
               ? this.info.bill + this.amount
-              : this.info.bill - this.amount;
-          await this.$store.dispatch("updateInfo", { bill });
-          this.$message("Запись успешно создана");
-          this.$v.$reset();
-          this.amount = 1;
-          this.description = "";
+              : this.info.bill - this.amount
+          await this.$store.dispatch('updateInfo', { bill })
+          this.$message('Запись успешно создана')
+          this.$v.$reset()
+          this.amount = 1
+          this.description = ''
         } catch (e) {
-          console.log(e);
+          console.log(e)
         }
       } else {
         this.$message(
           `Недостаточно средств на счете (${this.amount - this.info.bill})`
-        );
+        )
       }
     },
   },
   computed: {
-    ...mapGetters(["info"]),
+    ...mapGetters(['info']),
     canCreateRecord() {
-      if (this.type === "income") {
-        return true;
+      if (this.type === 'income') {
+        return true
       }
-      return this.info.bill >= this.amount;
+      return this.info.bill >= this.amount
     },
   },
   async mounted() {
-    this.categories = await this.$store.dispatch("fetchCategories");
-    this.loading = false;
+    this.categories = await this.$store.dispatch('fetchCategories')
+    this.loading = false
 
     if (this.categories) {
-      this.category = this.categories[0].id;
+      this.category = this.categories[0].id
     }
     setTimeout(() => {
-      this.select = window.M.FormSelect.init(this.$refs.select);
-      window.M.updateTextFields();
-    }, 0);
+      this.select = window.M.FormSelect.init(this.$refs.select)
+      window.M.updateTextFields()
+    }, 0)
   },
   validations: {
     amount: { minValue: minValue(1) },
     description: { required },
   },
-};
+}
 </script>
